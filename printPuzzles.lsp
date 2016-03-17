@@ -16,7 +16,16 @@
         (format t "There are ~d puzzles~%" numPuz)
         (format t "Puzzle Size: ~d~%" puzSize)
 
-        (splitPuzzleList puzList puzPerLine)
+        (setf splitPuzzles (splitPuzzleList puzList puzPerLine))
+
+        ; For each row of puzzles to be printed
+        (dolist (solutionRow splitPuzzles)
+            ; For each row in the puzzles
+            (dotimes (i puzSize)
+                (printSolutionRow solutionRow i t)
+            )
+            (format t "~%")
+        )
 
     )
 )
@@ -31,7 +40,6 @@
 (defun splitPuzzleList (puzzleList puzPerLine)
     ; Compute the number of lines based on the puzzles per line
     (setf nLines (ceiling (/ (length puzzleList) puzPerLine)))
-    (format t "nLines: ~d~%" nLines)
     ; Construct a list of NILs of length of number of lines
     (setf splitList (make-list nLines))
 
@@ -40,15 +48,13 @@
         ; For i=0 to length-1
         (dotimes (i (length puzzleList))
             ; Increment the rowIndex
-            (format t "i= ~d evaluates to ~s~%" i (and (> i '0) (= '0 (mod i puzPerLine)))  )
             (cond 
                 (
                     (and (> i '0) (= '0 (mod i puzPerLine))) 
                     (setf rowIndex (1+ rowIndex)) 
-                    (print rowIndex)
                 )
                 
-                (t (format t "No Inc for i= ~d~%" i) NIL)
+                (t NIL)
             )
             ;Append it to the appropriate index in the splitList
             ;(setf (nth rowIndex splitList) (append (nth rowIndex splitList) (copy-tree (nth i puzzleList))))
@@ -65,13 +71,13 @@
 (defun printSolutionRow ( puzzleList rowIndex lastRow ) 
     (dolist (puzzle puzzleList)
         (printPuzRow (nth rowIndex puzzle))
-        (format "    ")
+        (format t "    ")
     )
-    (format "~%")
+    (format t "~%")
 )
 
 (defun printPuzRow (rowList)
     (dolist (rowElem rowList)
-        (format "~2d  " rowElem)
+        (format t "~2d  " rowElem)
     )
 )
