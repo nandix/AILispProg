@@ -6,7 +6,7 @@
 ;                                   _________________________ one puzzle ________________________
 (defun printPuzzles ( puzPerLine puzList ) 
     
-    (setf puzList '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
+    ;(setf puzList '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
 
     ; Get 
     ( let  ( 
@@ -16,7 +16,7 @@
         (format t "There are ~d puzzles~%" numPuz)
         (format t "Puzzle Size: ~d~%" puzSize)
 
-        (splitPuzzleList puzList 2)
+        (splitPuzzleList puzList puzPerLine)
 
     )
 )
@@ -29,17 +29,32 @@
             - print row i
 |#
 (defun splitPuzzleList (puzzleList puzPerLine)
+    ; Compute the number of lines based on the puzzles per line
     (setf nLines (ceiling (/ (length puzzleList) puzPerLine)))
+    (format t "nLines: ~d~%" nLines)
+    ; Construct a list of NILs of length of number of lines
     (setf splitList (make-list nLines))
 
 
-    (let ((rowIndex -1))
+    (let ((rowIndex 0))
         ; For i=0 to length-1
         (dotimes (i (length puzzleList))
             ; Increment the rowIndex
-            (if (= '0 (mod i nLines)) (setf rowIndex (1+ rowIndex)) NIL)
+            (format t "i= ~d evaluates to ~s~%" i (and (> i '0) (= '0 (mod i puzPerLine)))  )
+            (cond 
+                (
+                    (and (> i '0) (= '0 (mod i puzPerLine))) 
+                    (setf rowIndex (1+ rowIndex)) 
+                    (print rowIndex)
+                )
+                
+                (t (format t "No Inc for i= ~d~%" i) NIL)
+            )
             ;Append it to the appropriate index in the splitList
-            (setf (nth rowIndex splitList) (append (nth rowIndex splitList) (copy-tree (nth i puzzleList))))
+            ;(setf (nth rowIndex splitList) (append (nth rowIndex splitList) (copy-tree (nth i puzzleList))))
+            (setf (nth rowIndex splitList) 
+                (append (nth rowIndex splitList) (list  (nth i puzzleList)) )
+            )
             
         )
 
