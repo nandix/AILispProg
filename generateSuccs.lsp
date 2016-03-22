@@ -19,7 +19,10 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 
 ;;;Let statement provides a static scope for the function
 (let ((loc nil))
-	(defun findzero (lst &optional (row 0) (col 0))
+	(defun findzero (lst start &optional (row 0) (col 0))
+	
+		(if (not (null start)) (setf loc NIL) NIL)
+
 		(cond
 			((not (null loc)))	; 0 has already been found, stop looking and return
 
@@ -27,26 +30,36 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 				(setf loc (list row col))	;Return the list (row col)
 			)
 			( (and (atom (car lst)) (not (null (car lst))) ) 	;we are inside a row, so iterate over columns
-				(findzero (cdr lst) row (1+ col))
+				(findzero (cdr lst ) NIL row (1+ col))
 			)
 			( (and (listp (car lst)) (not (null lst)) )	;lst is a list of rows so find 0 in the current row (car)
 														;and find 0 in the rest of the rows (cdr)
-				(findzero (car lst) row col)
-				(findzero (cdr lst) (1+ row) col)
+				(findzero (car lst) NIL row col)
+				(findzero (cdr lst) NIL (1+ row) col)
 			)
 		)
 		(return-from findzero loc)
 	)
+
 )
 
 (defun gensuccs (lst)
-	(let ((pos nil) (row nil) (col nil) (puzCopy nil) (children '()) (len nil))
-		(setf pos (findzero lst))
+	(let 
+		(
+			(pos nil) 
+			(row nil) 
+			(col nil) 
+			(puzCopy nil) 
+			(len nil)
+			(children '()) 
+		)
+
+		(setf pos (findzero lst t))
+
 		(setf row (car pos))
 		(setf col (car (cdr pos)))
-		(setf len (1- (length lst)))
+		(setf len (length lst))
 
-		
 
 		(cond
 			( (>= row 1)	;If row index is >= 1 then we can move our zero UP
@@ -56,7 +69,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 			)
 		)
 		(cond
-			( (< row len)	;If row index is < len then we can move our zero DOWN
+			( (< row (1- len))	;If row index is < len then we can move our zero DOWN
 				(setf puzCopy (copy-tree lst))
 				(rotatef (nth col (nth row puzCopy)) (nth col (nth (1+ row) puzCopy)))
 				(setf children (append children (list (copy-tree puzCopy))))
@@ -70,14 +83,15 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 			)
 		)
 		(cond
-			( ( < col len)	;If col index is < len then we can move our zero RIGHT
+			( ( < col (1- len))	;If col index is < len then we can move our zero RIGHT
 				(setf puzCopy (copy-tree lst))
 				(rotatef (nth col (nth row puzCopy)) (nth (1+ col) (nth row puzCopy)))
 				(setf children (append children (list (copy-tree puzCopy))))
 			)
 		)
+		(return-from gensuccs children)
 	)
 )
 
 
-(setf puz '((1 2 3 4)(5 6 0 8)(9 10 11 12)(13 14 15 7)))
+;(setf puz '((1 2 3 4)(5 6 0 8)(9 10 11 12)(13 14 15 7)))
