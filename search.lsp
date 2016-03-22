@@ -40,6 +40,9 @@ Modifications:
 (defun dfs (start) (search_bfs_dfs start 'dfs))
 
 ; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
+
+(load 'generateSuccs)
+
 (defun search_bfs_dfs (start type)
     (do*                                                    ; note use of sequential DO*
         (                                                   ; initialize local loop vars

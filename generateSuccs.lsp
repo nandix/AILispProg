@@ -43,7 +43,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 
 )
 
-(defun gensuccs (lst)
+(defun generate-successors (lst)
 	(let 
 		(
 			(pos nil) 
