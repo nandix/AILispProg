@@ -42,6 +42,14 @@ Modifications:
 ; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
 
 (load 'generateSuccs)
+(load 'goalState)
+
+; aStar called like (aStar startPuzzle #'numberCorrectHeur)
+;(defun aStar (start #'heuristicFunc) ; Not sure if that's right
+
+;    (heursticFunc curState goalState)
+
+;)
 
 (defun search_bfs_dfs (start type)
     (do*                                                    ; note use of sequential DO*

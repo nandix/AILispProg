@@ -89,7 +89,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 				(setf children (append children (list (copy-tree puzCopy))))
 			)
 		)
-		(return-from gensuccs children)
+		(return-from generate-successors children)
 	)
 )
 
