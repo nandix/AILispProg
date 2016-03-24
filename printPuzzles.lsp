@@ -31,6 +31,7 @@
         (setf *nodeCount* '0)
 
         ; Print DFID Statistics
+        ;(setf solutionPath (search_dfid '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
         (printStats *solutionPath* "DFID graph search")
         (printPuzzles numPerRow *solutionPath*)
 
@@ -38,6 +39,7 @@
         (setf *nodeCount* '0)
 
         ; Print A* Statistics
+        ;(setf solutionPath (search_a* '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
         (printStats *solutionPath* "A* graph search (heuristic: none...)")
         (printPuzzles numPerRow *solutionPath*)
 
