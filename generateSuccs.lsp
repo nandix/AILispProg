@@ -66,6 +66,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 				(setf puzCopy (copy-tree lst))
 				(rotatef (nth col (nth row puzCopy)) (nth col (nth (1- row) puzCopy)))
 				(setf children (append children (list (copy-tree puzCopy))))
+				(incf *nodeCount*)
 			)
 		)
 		(cond
@@ -73,6 +74,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 				(setf puzCopy (copy-tree lst))
 				(rotatef (nth col (nth row puzCopy)) (nth col (nth (1+ row) puzCopy)))
 				(setf children (append children (list (copy-tree puzCopy))))
+				(incf *nodeCount*)
 			)
 		)
 		(cond
@@ -80,6 +82,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 				(setf puzCopy (copy-tree lst))
 				(rotatef (nth col (nth row puzCopy)) (nth (1- col) (nth row puzCopy)))
 				(setf children (append children (list (copy-tree puzCopy))))
+				(incf *nodeCount*)
 			)
 		)
 		(cond
@@ -87,6 +90,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 				(setf puzCopy (copy-tree lst))
 				(rotatef (nth col (nth row puzCopy)) (nth (1+ col) (nth row puzCopy)))
 				(setf children (append children (list (copy-tree puzCopy))))
+				(incf *nodeCount*)
 			)
 		)
 		(return-from generate-successors children)

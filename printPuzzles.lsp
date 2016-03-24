@@ -6,66 +6,63 @@
 ;                                   |________________________ one puzzle _______________________|
 (setf *solutionPath* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
 (setf *closedList* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
-(setf *nodeCount* '8)
-(setf *uniqueCount* '6)
+;(setf *nodeCount* '8)
+;(setf *uniqueCount* '6)
+
+(defvar *nodeCount* 0)
+(defvar *uniqueCount* 0)
+(defvar *expandedCount* 0)
+
+(load 'search)
 
 (defun solvePuzzles ()
 
-    ;(let
+    (let ((numPerRow 4))
+
         ; Run breadth first search
-        (format t "BFS graph search~%")
-        (printStats)
-        (printPuzzles 3 *solutionPath*)
+        (setf *nodeCount* '0)
+        (setf solutionPath (search_bfs_dfs '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
+
+        ; Print BFS Statistics
+        (printStats solutionPath "BFS graph search")
+        (printPuzzles numPerRow solutionPath)
 
         ; Run DFID
-        (format t "DFID graph search~%")
-        (printStats)
-        (printPuzzles 3 *solutionPath*)
+        (setf *nodeCount* '0)
+
+        ; Print DFID Statistics
+        (printStats *solutionPath* "DFID graph search")
+        (printPuzzles numPerRow *solutionPath*)
 
         ; Run A*
-        (format t "A* graph search (heuristic: none...)~%")
-        (printStats)
-        (printPuzzles 3 *solutionPath*)
+        (setf *nodeCount* '0)
 
-    ;)
-
-
-    
-)
-
-(defun printStats ()
-    (format t "----------------~%")
-    (format t "Solution found in ~d moves~%" (length *solutionPath*))
-    (format t "~d nodes generated " *nodeCount* )
-    (format t "(~d distinct nodes), " *uniqueCount* )
-    (format t "~d nodes expanded~%" (length *closedList*))
-)
-
-(defun printPuzzles ( puzPerLine puzList ) 
-    
-    ;(setf puzList '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
-
-    ; Get 
-    ( let  ( 
-                (numPuz (length puzList)) ; Get the number of puzzles
-                (puzSize (length (car puzList))) ; Get the dimension of a puzzle
-            )
-        ;(format t "There are ~d puzzles~%" numPuz)
-        ;(format t "Puzzle Size: ~d~%" puzSize)
-
-        (setf splitPuzzles (splitPuzzleList puzList puzPerLine))
-
-        ; For each row of puzzles to be printed
-        (dolist (solutionRow splitPuzzles)
-            ; For each row in the puzzles
-            (dotimes (i puzSize)
-                (printSolutionRow solutionRow i t)
-            )
-            (format t "~%")
-        )
+        ; Print A* Statistics
+        (printStats *solutionPath* "A* graph search (heuristic: none...)")
+        (printPuzzles numPerRow *solutionPath*)
 
     )
+
+
+    
 )
+
+(defun printStats (puzList titleString)
+
+    (format t titleString)
+    (format t "~%")
+
+    ( dotimes (i (length titleString))
+        (format t "-")
+    )
+    (format t "~%")
+
+    (format t "Solution found in ~d moves~%" (1- (length puzList)))
+    (format t "~d nodes generated " *nodeCount* )
+    (format t "(~d distinct nodes), " *uniqueCount* )
+    (format t "~d nodes expanded~%~%" *expandedCount* )
+)
+
 
 #|
     - Figure out the number of rows we need
@@ -105,16 +102,56 @@
     )
 )
 
-(defun printSolutionRow ( puzzleList rowIndex lastRow ) 
-    (dolist (puzzle puzzleList)
-        (printPuzRow (nth rowIndex puzzle))
-        (format t "    ")
+
+(defun printPuzzles ( puzPerLine puzList ) 
+    
+    ;(setf puzList '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
+
+    ; Get 
+    ( let  ( 
+                (numPuz (length puzList)) ; Get the number of puzzles
+                (puzSize (length (car puzList))) ; Get the dimension of a puzzle
+            )
+
+        (setf splitPuzzles (splitPuzzleList puzList puzPerLine))
+
+        ; For each row of puzzles to be printed
+        (dolist (solutionRow splitPuzzles)
+            ; For each row in the puzzles
+            (dotimes (i puzSize)
+                ( if (= i (floor (/ puzSize 2)))
+                    (printSolutionRow solutionRow i 'NIL t)
+                    (printSolutionRow solutionRow i 'NIL 'NIL)
+                )
+            )
+            (format t "~%")
+        )
+
     )
+)
+
+(defun printSolutionRow ( puzzleList rowIndex lastRow middleRow ) 
+    
+    (dolist (puzzle puzzleList)
+
+        (printPuzRow (nth rowIndex puzzle))
+
+        (if (not (null middleRow))
+            (format t "   ->   ")
+            (format t "        ")
+        )
+
+    )
+    
+
     (format t "~%")
 )
 
 (defun printPuzRow (rowList)
     (dolist (rowElem rowList)
-        (format t "~2d  " rowElem)
+        (if (/= '0 rowElem)
+            (format t "~2d " rowElem)
+            (format t "   ")
+        )
     )
 )
