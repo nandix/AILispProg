@@ -26,7 +26,7 @@ Modifications:
 ;--------------------------------------------------------------------------
 
 ; Node structure: stores state and parent.
-(defstruct node state parent)
+(defstruct node state parent depth)
 
 ; Test if two nodes have the same state.
 (defun equal-states (n1 n2) (equal (node-state n1) (node-state n2)))
@@ -122,5 +122,89 @@ Modifications:
 (defun member-state (state node-list)
     (dolist (node node-list)
         (when (equal state (node-state node)) (return node))
+    )
+)
+
+;------------------------------------------------------------------------------
+; Function: 	dfs_id
+;
+; Author:	Dylan Geyer
+;
+; Description:	This is a helper function to the depth first search. It will
+;		call the depth first search routine with an increasing depth
+;		bound each time. This will continue until a solution is found.
+;
+; Parameters:	start - start state representation
+;
+; Return:	solution path from start state to goal state
+;------------------------------------------------------------------------------
+(defun dfs_id (start)
+	(let ((res nil) (depth 1))
+		(loop
+			(setf res (bounded_dfs start depth))
+			(when (not (null res)) (return-from dfs_id res))
+			(setf depth (1+ depth))
+		)
+	)
+)
+
+;------------------------------------------------------------------------------
+; Function: 	bounded_dfs
+;
+; Author:	John M. Weiss, Ph.D., Modified by Dylan Geyer
+;
+; Description:	This is a modification of the depth first search code provided
+;		by Dr. Weiss. This function takes a depth bound as an optional
+;		argument and without it it will run as 'unbounded' with an
+;		essentially infinite depth bound. The modifications that make
+;		this function depth bounded is the encapsulation of the generate
+;		succesors code in an if statement that checks the current depth
+;		agains the depth bound. If we have reach the depth bound then
+;		no more successors are generated.
+;
+; Parameters:	start - start state representation
+;		depthbound - Maximum depth to search, default to 9999
+;
+; Return:	solution path from start state to goal state
+;------------------------------------------------------------------------------
+(defun bounded_dfs (start &optional (depthbound 9999))
+    (do*                                                    		; note use of sequential DO*
+        (                                                   		; initialize local loop vars
+            (curNode (make-node :state start :parent nil :depth 0)) ; current node: (start nil)
+            (OPEN (list curNode))                           		; OPEN list:    ((start nil))
+            (CLOSED nil)                                    		; CLOSED list:  ( )
+        )
+
+        ; termination condition - return solution path when goal is found
+        ((goal-state? (node-state curNode)) (build-solution curNode CLOSED))
+
+        ; loop body
+        (when (null OPEN) (return nil))             ; no solution
+
+        ; get current node from OPEN, update OPEN and CLOSED
+        (setf curNode (car OPEN))
+        (setf OPEN (cdr OPEN))
+        (setf CLOSED (cons curNode CLOSED))
+
+		; if curNodes depth is less than depthbound generate successors
+		(if (< (node-depth curNode) depthbound)
+
+			; add successors of current node to OPEN
+			(dolist (child (generate-successors (node-state curNode)))
+
+				; for each child node
+				(setf child (make-node :state child :parent (node-state curNode) :depth (1+ (node-depth curNode))))
+
+				; if the node is not on OPEN or CLOSED
+				(if (and (not (member child OPEN   :test #'equal-states))
+				         (not (member child CLOSED :test #'equal-states)))
+					
+				    ; add it to the OPEN list
+					; DFS - add to start of OPEN list (stack)
+					(setf OPEN (cons child OPEN))
+				)
+			)
+		)
+       
     )
 )
