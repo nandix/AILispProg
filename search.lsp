@@ -41,9 +41,6 @@ Modifications:
 
 ; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
 
-(load 'generateSuccs)
-(load 'goalState)
-
 ; aStar called like (aStar startPuzzle #'numberCorrectHeur)
 ;(defun aStar (start #'heuristicFunc) ; Not sure if that's right
 
@@ -146,7 +143,7 @@ Modifications:
 			
 			;Keep a running total of *expandedCount* and *uniqueCount*
 			(setf expandedSum (+ expandedSum *expandedCount*))
-			(setf uniqueSum (+ uniqueSum *uniqueCount))
+			(setf uniqueSum (+ uniqueSum *uniqueCount*))
 
 
 			;Set the globals to the sums in case we return this loop

@@ -1,4 +1,13 @@
-(load 'printPuzzles)
+(defvar *nodeCount* 0)
+(defvar *uniqueCount* 0)
+(defvar *expandedCount* 0)
+(defvar *goalState* nil)
+
+(load "generateSuccs.lsp")
+(load "goalState.lsp")
+(load "search.lsp")
+(load "astar.lsp")
+(load "printPuzzles.lsp")
 
 (defun 8puzzle (&optional (start_state nil))
 	(cond
@@ -19,8 +28,17 @@
 )
 
 (defun read-state ()
-	(format t "Enter (9/16/25) numbers:")
-	(convert-state (read))
+	(let ((n 0) (data nil))
+		(format t "Enter n x n:")
+		(setf n (read))
+		(format t "Enter tile positions:")
+		(loop for i from 0 to (1- n) do
+			(loop for j from 0 to (1- n) do
+				(setf data (append data (list (read))))
+			)
+		)
+		(convert-state data)
+	)
 )
 
 (defun read-state-file (filename)

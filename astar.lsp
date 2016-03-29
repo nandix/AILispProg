@@ -1,8 +1,3 @@
-(load 'generateSuccs)
-(load 'goalState)
-(load 'search)
-(load 'printPuzzles)
-
 ; hard coded goal state, will replace with read in goal state
 (defun goal-state ()
 	(setf x '((1 2 3) (8 0 4) (7 6 5)))
