@@ -15,13 +15,13 @@
 
 (load 'search)
 
-(defun solvePuzzles (start_state)
+(defun solvePuzzles ()
 
     (let ((numPerRow 4))
 
         ; Run breadth first search
         (setf *nodeCount* '0)
-        (setf solutionPath (search_bfs_dfs start_state 'bfs))
+        (setf solutionPath (search_bfs_dfs '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
 
         ; Print BFS Statistics
         (printStats solutionPath "BFS graph search")
@@ -29,9 +29,9 @@
 
         ; Run DFID
         (setf *nodeCount* '0)
+	(setf solutionPath (dfs_id '((2 8 3) (1 6 0) (7 5 4)))
 
         ; Print DFID Statistics
-        ;(setf solutionPath (search_dfid start_state))
         (printStats *solutionPath* "DFID graph search")
         (printPuzzles numPerRow *solutionPath*)
 
@@ -39,7 +39,7 @@
         (setf *nodeCount* '0)
 
         ; Print A* Statistics
-        ;(setf solutionPath (search_a* start_state 'bfs))
+        ;(setf solutionPath (search_a* '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
         (printStats *solutionPath* "A* graph search (heuristic: none...)")
         (printPuzzles numPerRow *solutionPath*)
 
