@@ -1,5 +1,15 @@
 
-; This function calculates the number of tiles in the wrong position
+; -------------------------------------------------------------------------------------------------------
+; Function: numWrong 
+;
+; Author:	Mack Smith, Dylan Geyer
+;
+; Description:  This function finds the number of tiles in the wrong postition.
+;
+; Parameters:  L - the state to be processed
+;
+; Returns: wrong - the number of tiles in the wrong position
+; -------------------------------------------------------------------------------------------------------
 (defun numWrong (L)
 	(let ((wrong 0) (col 0) (row 0))
 		; first loop, enters the state list
@@ -25,11 +35,15 @@
 	)
 )
 ; -------------------------------------------------------------------------------------------------------
-; Author:	Mack Smith
 ; Function: minDist 
+;
+; Author:	Mack Smith
+;
 ; Description:  This function finds the minimum distance for each tile to be in the goal state and sums
 ; 				them up.  This sum is used as the heuristic value to be sorted.
+;
 ; Parameters:  L - the state to be processed
+;
 ; Returns: distSum - the sum of the distances each tile has to the goal state.
 ; -------------------------------------------------------------------------------------------------------
 (defun minDist (L)
@@ -48,61 +62,26 @@
 		(return-from minDist distSum)
 	)
 )
+
 ; -------------------------------------------------------------------------------------------------------
-; Author: Mack Smith
-; Function: numCorrectSort
-; Description:  The purpose of this function is to be able to be invoked when using
-;				the built-in sort routine.  It requires two arguments as opposed to 
-;				the heuristic functions which only require one.
-; Parameters:	L - the left side of the comparison
-;				R - the right side of the comparison
-; Returns:		nil - if L < R
-;				t - if L > R
+; Function: inadmissible 
+;
+; Author:	Mack Smith
+;
+; Description:  This is our inadmissible heuristic function.  It calculates the minimum distance each
+;				tile is from the goal state by calling the minDist function.  Then it multiplies it by
+;				2 in order to make the heuristic inadmissible.
+;
+; Parameters:  L - the state to be processed
+;
+; Returns: heurVal - the heuristic value.
 ; -------------------------------------------------------------------------------------------------------
-(defun numCorrectSort (L R)
-	(let ()
-		(cond
-			;  If the left node is less correct tiles than right
-			((< (numCorrect (node-state L)) (numCorrect (node-state R))) 
-				nil
-			)
-			; If the left node has more correct tiles than right
-			((> (numCorrect (node-state L)) (numCorrect (node-state R)))
-				t
-			)
-		)
+(defun inadmissible (L)
+	(let (heurVal)
+		(setf heurVal (* 2 (minDist L)))
+		(return-from inadmissible heurVal)
 	)
 )
-; -------------------------------------------------------------------------------------------------------
-; Author: Mack Smith
-; Function: minDistSort
-; Description:  The purpose of this function is to be able to be invoked when using
-;				the built-in sort routine.  It requires two arguments as opposed to 
-;				the heuristic functions which only require one.
-; Parameters:	L - the left side of the comparison
-;				R - the right side of the comparison
-; Returns:		nil - if L < R
-;				t - if L > R
-; -------------------------------------------------------------------------------------------------------
-(defun minDistSort (L R)
-	(let ()
-		(cond
-			;  If the left node is less than right
-			((< (minDist (node-state L)) (minDist (node-state R))) 
-				t
-			)
-			; If the left node is more than right
-			((> (minDist (node-state L)) (minDist (node-state R)))
-				nil
-			)
-		)
-	)
-)
-
-
-
-=======
->>>>>>> db0deeaaa75e763946bdeef4cb32785f01bc86d1
 
 ;------------------------------------------------------------------------------
 ; Function: 	astar

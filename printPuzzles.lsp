@@ -47,6 +47,14 @@
         ; Print A* Statistics
         (printStats solutionPath "A* graph search (heuristic: Sum of Minimum distances)")
         (printPuzzles numPerRow solutionPath)
+		
+		; Run A*
+		(setf *nodeCount* '0)
+	(setf solutionPath (astar start_state #'inadmissible))
+	
+		; Print A* Statistics
+		(printStats solutionPath "A* graph search(heuristic: 2 * Sum of Minimum distances)")
+		(printPuzzles numPerRow solutionPath)
 
     )
 )
