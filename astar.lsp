@@ -3,8 +3,14 @@
 	(setf x '((1 2 3) (8 0 4) (7 6 5)))
 	(return-from goal-state x)
 )
-
-; This function calculates the number of tiles in the correct position
+; -------------------------------------------------------------------------------------------------------
+; Author: 	Mack Smith
+; Function:		numCorrect
+; Description: 	This function computes the number of tiles in the correct
+;				position.
+; Parameters:	L - the state to be processed
+; Returns:	correct - the number of correct tiles
+; -------------------------------------------------------------------------------------------------------
 (defun numCorrect (L)
 	(let ((correct 0) (col 0) (row 0))
 
@@ -31,9 +37,14 @@
 		(return-from numCorrect correct)
 	)
 )
-
-; This function finds the minimum distance for each tile to be in the goal state and sums
-; them up.  This sum is used as the heuristic value to be sorted.
+; -------------------------------------------------------------------------------------------------------
+; Author:	Mack Smith
+; Function: minDist 
+; Description:  This function finds the minimum distance for each tile to be in the goal state and sums
+; 				them up.  This sum is used as the heuristic value to be sorted.
+; Parameters:  L - the state to be processed
+; Returns: distSum - the sum of the distances each tile has to the goal state.
+; -------------------------------------------------------------------------------------------------------
 (defun minDist (L)
 	(let ((distSum 0) left  right temp)
 		(dolist (i (list L) nil) ;enters state list
@@ -50,8 +61,17 @@
 		(return-from minDist distSum)
 	)
 )
-
-; This is the function that can be used in the built in sort function.
+; -------------------------------------------------------------------------------------------------------
+; Author: Mack Smith
+; Function: numCorrectSort
+; Description:  The purpose of this function is to be able to be invoked when using
+;				the built-in sort routine.  It requires two arguments as opposed to 
+;				the heuristic functions which only require one.
+; Parameters:	L - the left side of the comparison
+;				R - the right side of the comparison
+; Returns:		nil - if L < R
+;				t - if L > R
+; -------------------------------------------------------------------------------------------------------
 (defun numCorrectSort (L R)
 	(let ()
 		(cond
@@ -66,8 +86,17 @@
 		)
 	)
 )
-
-; The minimum distance function that can be passed to the lisp sort function
+; -------------------------------------------------------------------------------------------------------
+; Author: Mack Smith
+; Function: minDistSort
+; Description:  The purpose of this function is to be able to be invoked when using
+;				the built-in sort routine.  It requires two arguments as opposed to 
+;				the heuristic functions which only require one.
+; Parameters:	L - the left side of the comparison
+;				R - the right side of the comparison
+; Returns:		nil - if L < R
+;				t - if L > R
+; -------------------------------------------------------------------------------------------------------
 (defun minDistSort (L R)
 	(let ()
 		(cond
@@ -98,8 +127,8 @@
 ;		expand.  
 ;
 ; Parameters:	start - start state representation
-;		heuristic - the functional argument that represents the desired
-;			   heuristic.  Default is number of correct tiles.
+;				heuristic - the functional argument that represents the desired
+;			   	heuristic.  Default is number of correct tiles.
 ;
 ; Return:	solution path from start state to goal state
 ;------------------------------------------------------------------------------
@@ -140,7 +169,9 @@
 		        (setf OPEN (append OPEN (list child)))
 		    )
 		)
-		
+		(setf *expandedCount* (length CLOSED))
+		(setf *uniqueCount* (+ (length OPEN) (length CLOSED)))
 	)
+	
 )
 
