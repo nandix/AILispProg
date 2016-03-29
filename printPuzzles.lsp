@@ -34,10 +34,18 @@
 
         ; Run A*
         (setf *nodeCount* '0)
-	(setf solutionPath (astar start_state #'numCorrectSort))
+	(setf solutionPath (astar start_state #'numWrong))
 
         ; Print A* Statistics
         (printStats solutionPath "A* graph search (heuristic: Number in correct position)")
+        (printPuzzles numPerRow solutionPath)
+
+        ; Run A*
+        (setf *nodeCount* '0)
+	(setf solutionPath (astar start_state #'minDist))
+
+        ; Print A* Statistics
+        (printStats solutionPath "A* graph search (heuristic: Sum of Minimum distances)")
         (printPuzzles numPerRow solutionPath)
 
     )
