@@ -78,7 +78,7 @@
 ; -------------------------------------------------------------------------------------------------------
 (defun inadmissible (L)
 	(let (heurVal)
-		(setf heurVal (* 2 (minDist L)))
+		(setf heurVal (+ (* 3 (numWrong L)) (minDist L)))
 		(return-from inadmissible heurVal)
 	)
 )
