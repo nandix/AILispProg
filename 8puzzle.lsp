@@ -71,4 +71,8 @@
 	)
 )
 
-(8puzzle 0)
+(cond
+	( (> (length *args*) 0)
+		(8puzzle (car *args*))
+	)
+)
