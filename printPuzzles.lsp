@@ -29,9 +29,9 @@
 
         ; Run DFID
         (setf *nodeCount* '0)
+	(setf solutionPath (dfs_id '((2 8 3) (1 6 0) (7 5 4)))
 
         ; Print DFID Statistics
-        ;(setf solutionPath (search_dfid '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
         (printStats *solutionPath* "DFID graph search")
         (printPuzzles numPerRow *solutionPath*)
 

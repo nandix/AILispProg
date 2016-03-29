@@ -139,9 +139,20 @@ Modifications:
 ; Return:	solution path from start state to goal state
 ;------------------------------------------------------------------------------
 (defun dfs_id (start)
-	(let ((res nil) (depth 1))
+	(let ((res nil) (depth 1) (expandedSum 0) (uniqueSum 0))
+		;Increase depth bound by 1 until a solution is found
 		(loop
 			(setf res (bounded_dfs start depth))
+			
+			;Keep a running total of *expandedCount* and *uniqueCount*
+			(setf expandedSum (+ expandedSum *expandedCount*))
+			(setf uniqueSum (+ uniqueSum *uniqueCount))
+
+
+			;Set the globals to the sums in case we return this loop
+			(setf *expandedCount* expandedSum)
+			(setf *uniqueSum* uniqueSum)
+
 			(when (not (null res)) (return-from dfs_id res))
 			(setf depth (1+ depth))
 		)
@@ -205,6 +216,8 @@ Modifications:
 				)
 			)
 		)
-       
+
+        (setf *expandedCount* (length CLOSED))
+        (setf *uniqueCount* (+ (length OPEN) (length CLOSED)))
     )
 )
