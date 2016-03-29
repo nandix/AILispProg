@@ -17,6 +17,22 @@ moving the zero
 Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 |#
 
+(defun find-atom (&optional (atom 0) (lst '()))
+	(let ((r 0) (c 0))
+		(loop for row in lst do
+			(setf c (position atom row :test #'equal))
+			(cond
+				( (null c)
+					(setf r (1+ r))
+				)
+				(t
+					(return-from find-atom (list r c))
+				)
+			)
+		)
+	)
+)
+
 ;;;Let statement provides a static scope for the function
 (let ((loc nil))
 	(defun findzero (lst start &optional (row 0) (col 0))
