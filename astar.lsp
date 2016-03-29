@@ -1,10 +1,7 @@
-; Node structure: stores state and parent.
-(defstruct node state parent)
-
-
 (load 'generateSuccs)
 (load 'goalState)
 (load 'search)
+(load 'printPuzzles)
 
 ; hard coded goal state, will replace with read in goal state
 (defun goal-state ()
@@ -12,16 +9,7 @@
 	(return-from goal-state x)
 )
 
-; Function: 	numCorrect - Admissible heuristic function
-;
-; Author: 		Mack Smith
-;
-; Description:	The actual heuristic function, returns the number 
-;				of correct tiles.  Compares to the goal-state.
-;
-; Parameters:	L - the target state
-;
-; Returns:		correct - the number of correct tiles
+; This function calculates the number of tiles in the correct position
 (defun numCorrect (L)
 	(let ((correct 0) (col 0) (row 0))
 
@@ -49,6 +37,25 @@
 	)
 )
 
+; This function finds the minimum distance for each tile to be in the goal state and sums
+; them up.  This sum is used as the heuristic value to be sorted.
+(defun minDist (L)
+	(let ((distSum 0) left  right temp)
+		(dolist (i (list L) nil) ;enters state list
+			(dolist (j i nil)
+				(dolist (k j nil)
+					(setf left (find-atom k L))
+					(setf right (find-atom k (goal-state)))
+				
+					(setf temp (+ (abs(- (car right)(car left))) (abs(- (second right)(second left)))))
+					(setf distSum (+ distSum temp))
+				)
+			)
+		)
+		(return-from minDist distSum)
+	)
+)
+
 ; This is the function that can be used in the built in sort function.
 (defun numCorrectSort (L R)
 	(let ()
@@ -64,6 +71,24 @@
 		)
 	)
 )
+
+; The minimum distance function that can be passed to the lisp sort function
+(defun minDistSort (L R)
+	(let ()
+		(cond
+			;  If the left node is less than right
+			((< (minDist (node-state L)) (minDist (node-state R))) 
+				t
+			)
+			; If the left node is more than right
+			((> (minDist (node-state L)) (minDist (node-state R)))
+				nil
+			)
+		)
+	)
+)
+
+
 
 
 ;------------------------------------------------------------------------------
