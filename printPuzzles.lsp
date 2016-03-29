@@ -4,8 +4,8 @@
 ;   puzPerLine - the number of puzzles to print in a single row
 ;   puzList - the list of puzzles ( ((p11 p12 ... p1n ) (p21 p22 ... p2n ) ... (pn1 pn2... pnn) ) ... (remaining puzzles) )
 ;                                   |________________________ one puzzle _______________________|
-(setf *solutionPath* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
-(setf *closedList* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
+(setf *solutionPath* '())
+(setf *closedList* '())
 ;(setf *nodeCount* '8)
 ;(setf *uniqueCount* '6)
 
@@ -15,13 +15,13 @@
 
 (load 'search)
 
-(defun solvePuzzles ()
+(defun solvePuzzles (start_state)
 
     (let ((numPerRow 4))
 
         ; Run breadth first search
         (setf *nodeCount* '0)
-        (setf solutionPath (search_bfs_dfs '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
+        (setf solutionPath (search_bfs_dfs start_state 'bfs))
 
         ; Print BFS Statistics
         (printStats solutionPath "BFS graph search")
@@ -29,7 +29,7 @@
 
         ; Run DFID
         (setf *nodeCount* '0)
-	(setf solutionPath (dfs_id '((2 8 3) (1 6 0) (7 5 4)))
+	(setf solutionPath (dfs_id start_state)
 
         ; Print DFID Statistics
         (printStats *solutionPath* "DFID graph search")
@@ -37,10 +37,10 @@
 
         ; Run A*
         (setf *nodeCount* '0)
+	;(setf solutionPath (astar start_state #'numCorrectSort))
 
         ; Print A* Statistics
-        ;(setf solutionPath (search_a* '((2 8 3) (1 6 0) (7 5 4)) 'bfs))
-        (printStats *solutionPath* "A* graph search (heuristic: none...)")
+        (printStats *solutionPath* "A* graph search (heuristic: Number in correct position)")
         (printPuzzles numPerRow *solutionPath*)
 
     )
