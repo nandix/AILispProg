@@ -4,8 +4,9 @@
 ;   puzPerLine - the number of puzzles to print in a single row
 ;   puzList - the list of puzzles ( ((p11 p12 ... p1n ) (p21 p22 ... p2n ) ... (pn1 pn2... pnn) ) ... (remaining puzzles) )
 ;                                   |________________________ one puzzle _______________________|
-(setf *solutionPath* '())
-(setf *closedList* '())
+
+;(setf *solutionPath* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
+;(setf *closedList* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
 ;(setf *nodeCount* '8)
 ;(setf *uniqueCount* '6)
 
@@ -99,6 +100,7 @@
             )
             
         )
+        (setf (cdr (last (car(last splitList)))) (cons 'NIL 'NIL) )
 
         (return-from splitPuzzleList splitList)
     )
@@ -113,6 +115,7 @@
     ( let  ( 
                 (numPuz (length puzList)) ; Get the number of puzzles
                 (puzSize (length (car puzList))) ; Get the dimension of a puzzle
+                (lastRow)
             )
 
         (setf splitPuzzles (splitPuzzleList puzList puzPerLine))
@@ -120,10 +123,12 @@
         ; For each row of puzzles to be printed
         (dolist (solutionRow splitPuzzles)
             ; For each row in the puzzles
+            (setf isLastRow (car (last solutionRow)))
+
             (dotimes (i puzSize)
                 ( if (= i (floor (/ puzSize 2)))
-                    (printSolutionRow solutionRow i 'NIL t)
-                    (printSolutionRow solutionRow i 'NIL 'NIL)
+                    (printSolutionRow solutionRow i isLastRow t)
+                    (printSolutionRow solutionRow i isLastRow 'NIL)
                 )
             )
             (format t "~%")
@@ -132,17 +137,50 @@
     )
 )
 
+; Print one line of a solution all the way across the terminal (one
+;   row from each puzzle in that line)
 (defun printSolutionRow ( puzzleList rowIndex lastRow middleRow ) 
     
-    (dolist (puzzle puzzleList)
+    ;(dolist (puzzle puzzleList)
+    ;(print puzzleList)
+    (let (puzzle)
+    (dotimes (i (length puzzleList))
+        (setf puzzle (nth i puzzleList))
+        ;(format t "Cadr is ~s~%" (cadr puzzle))
 
-        (printPuzRow (nth rowIndex puzzle))
 
-        (if (not (null middleRow))
-            (format t "   ->   ")
-            (format t "        ")
+
+        (cond
+            
+
+            ; If it's the middle row and there's more puzzles to print,
+            ;   print an arrow
+            (
+                (and (not (null middleRow)) (not (equal puzzle 'NIL)))
+                
+                (printPuzRow (nth rowIndex puzzle))
+
+                (if 
+                    (and (= i (- (length puzzleList) 2)) (equal lastRow 'NIL) ) 
+                    (format t "")
+                    (format t "   ->   ")
+                )
+                
+                
+            )
+            ; Otherwise, print filler spaces
+            (  (not (equal puzzle 'NIL))
+                (printPuzRow (nth rowIndex puzzle))
+                (if 
+                    (and (= i (- (length puzzleList) 2)) (equal lastRow 'NIL) ) 
+                    (format t "")
+                    (format t "        ") 
+                )
+            )
+            (t (format t ""))
         )
 
+    )
     )
     
 
