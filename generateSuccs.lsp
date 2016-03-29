@@ -33,31 +33,6 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 	)
 )
 
-;;;Let statement provides a static scope for the function
-(let ((loc nil))
-	(defun findzero (lst start &optional (row 0) (col 0))
-	
-		(if (not (null start)) (setf loc NIL) NIL)
-
-		(cond
-			((not (null loc)))	; 0 has already been found, stop looking and return
-
-			( (equal (car lst) 0)	; 0 has just been found! set the static variable
-				(setf loc (list row col))	;Return the list (row col)
-			)
-			( (and (atom (car lst)) (not (null (car lst))) ) 	;we are inside a row, so iterate over columns
-				(findzero (cdr lst ) NIL row (1+ col))
-			)
-			( (and (listp (car lst)) (not (null lst)) )	;lst is a list of rows so find 0 in the current row (car)
-														;and find 0 in the rest of the rows (cdr)
-				(findzero (car lst) NIL row col)
-				(findzero (cdr lst) NIL (1+ row) col)
-			)
-		)
-		(return-from findzero loc)
-	)
-
-)
 
 (defun generate-successors (lst)
 	(let 
@@ -70,7 +45,7 @@ Check for stepping off bounds of list where 1- and 1+ are going < 0 or > col/row
 			(children '()) 
 		)
 
-		(setf pos (findzero lst t))
+		(setf pos (find-atom 0 lst))
 
 		(setf row (car pos))
 		(setf col (car (cdr pos)))
