@@ -5,20 +5,16 @@
 ;   puzList - the list of puzzles ( ((p11 p12 ... p1n ) (p21 p22 ... p2n ) ... (pn1 pn2... pnn) ) ... (remaining puzzles) )
 ;                                   |________________________ one puzzle _______________________|
 
-;(setf *solutionPath* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
-;(setf *closedList* '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
+;(setf *solutionPath* '())
+;(setf *closedList* '())
 ;(setf *nodeCount* '8)
 ;(setf *uniqueCount* '6)
 
-(defvar *nodeCount* 0)
-(defvar *uniqueCount* 0)
-(defvar *expandedCount* 0)
 
-(load 'search)
 
 (defun solvePuzzles (start_state)
 
-    (let ((numPerRow 4))
+    (let ((numPerRow 4) (solutionPath '()))
 
         ; Run breadth first search
         (setf *nodeCount* '0)
@@ -30,24 +26,21 @@
 
         ; Run DFID
         (setf *nodeCount* '0)
-	(setf solutionPath (dfs_id start_state)
+	(setf solutionPath (dfs_id start_state))
 
         ; Print DFID Statistics
-        (printStats *solutionPath* "DFID graph search")
-        (printPuzzles numPerRow *solutionPath*)
+        (printStats solutionPath "DFID graph search")
+        (printPuzzles numPerRow solutionPath)
 
         ; Run A*
         (setf *nodeCount* '0)
-	;(setf solutionPath (astar start_state #'numCorrectSort))
+	(setf solutionPath (astar start_state #'numCorrectSort))
 
         ; Print A* Statistics
-        (printStats *solutionPath* "A* graph search (heuristic: Number in correct position)")
-        (printPuzzles numPerRow *solutionPath*)
+        (printStats solutionPath "A* graph search (heuristic: Number in correct position)")
+        (printPuzzles numPerRow solutionPath)
 
     )
-
-
-    
 )
 
 (defun printStats (puzList titleString)

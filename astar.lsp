@@ -1,10 +1,5 @@
 ; Node structure: stores state and parent.
-(defstruct node state parent)
-
-
-(load 'generateSuccs)
-(load 'goalState)
-(load 'search)
+;(defstruct node state parent)
 
 ; hard coded goal state, will replace with read in goal state
 (defun goal-state ()

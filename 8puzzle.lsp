@@ -1,4 +1,13 @@
-(load 'printPuzzles)
+(defvar *nodeCount* 0)
+(defvar *uniqueCount* 0)
+(defvar *expandedCount* 0)
+(defvar *goalState* nil)
+
+(load "generateSuccs.lsp")
+(load "goalState.lsp")
+(load "search.lsp")
+(load "astar.lsp")
+(load "printPuzzles.lsp")
 
 (defun 8puzzle (&optional (start_state nil))
 	(cond

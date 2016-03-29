@@ -1,5 +1,3 @@
-(load "8puzzle.lsp")
-
 (defun goal-state? (testState)
 	(if (null *goalState*)
 		(setf *goalState* (read-state-file 'goal.puz))
