@@ -28,8 +28,17 @@
 )
 
 (defun read-state ()
-	(format t "Enter (9/16/25) numbers:")
-	(convert-state (read))
+	(let ((n 0) (data nil))
+		(format t "Enter n x n:")
+		(setf n (read))
+		(format t "Enter tile positions:")
+		(loop for i from 0 to (1- n) do
+			(loop for j from 0 to (1- n) do
+				(setf data (append data (list (read))))
+			)
+		)
+		(convert-state data)
+	)
 )
 
 (defun read-state-file (filename)
