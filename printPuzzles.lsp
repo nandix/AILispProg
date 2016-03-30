@@ -1,16 +1,3 @@
-;Print board takes a list of 8, 15, or 24 puzzles and prints them out in
-; an easy to read manner. It takes as parameters:
-;   puzSize - the size puzzle on one dimension (3, 4, 5, etc)
-;   puzPerLine - the number of puzzles to print in a single row
-;   puzList - the list of puzzles ( ((p11 p12 ... p1n ) (p21 p22 ... p2n ) ... (pn1 pn2... pnn) ) ... (remaining puzzles) )
-;                                   |________________________ one puzzle _______________________|
-
-;(setf *solutionPath* '())
-;(setf *closedList* '())
-;(setf *nodeCount* '8)
-;(setf *uniqueCount* '6)
-
-
 ;------------------------------------------------------------------------------
 ; Function:     solvePuzzles
 ;
@@ -58,7 +45,7 @@
 
         ; Run A*
         (setf *nodeCount* '0)
-	(setf solutionPath (astar start_state #'minDist))
+	   (setf solutionPath (astar start_state #'minDist))
 
         ; Print A* Statistics
         (printStats solutionPath "A* graph search (heuristic: Sum of Minimum distances)")
@@ -66,7 +53,7 @@
 		
 		; Run A*
 		(setf *nodeCount* '0)
-	(setf solutionPath (astar start_state #'inadmissible))
+	    (setf solutionPath (astar start_state #'inadmissible))
 	
 		; Print A* Statistics
 		(printStats solutionPath "A* graph search(heuristic: 2 * Sum of Minimum distances)")
@@ -91,17 +78,23 @@
 ;------------------------------------------------------------------------------
 (defun printStats (puzList titleString)
 
+    ; Print the title with a newline
     (format t titleString)
     (format t "~%")
 
+    ; Print the underline under the title string
     ( dotimes (i (length titleString))
         (format t "-")
     )
     (format t "~%")
 
+    ; Print the number of moves to complete the puzzle
     (format t "Solution found in ~d moves~%" (1- (length puzList)))
+    ; Print the total number of nodes required
     (format t "~d nodes generated " *nodeCount* )
+    ; Print the number of distinct nodes
     (format t "(~d distinct nodes), " *uniqueCount* )
+    ; Print the number of nodes expanded
     (format t "~d nodes expanded~%~%" *expandedCount* )
 )
 
@@ -132,10 +125,12 @@
     (setf splitList (make-list nLines))
 
 
+    ; For each row of n puzzles to print out
     (let ((rowIndex 0))
-        ; For i=0 to length-1
+        ; For each puzzle to be printed...
         (dotimes (i (length puzzleList))
-            ; Increment the rowIndex
+            ; Increment the rowIndex if the current line already 
+            ;   had puzPerLine puzzles
             (cond 
                 (
                     (and (> i '0) (= '0 (mod i puzPerLine))) 
@@ -144,15 +139,16 @@
                 
                 (t NIL)
             )
-            ;Append it to the appropriate index in the splitList
-            ;(setf (nth rowIndex splitList) (append (nth rowIndex splitList) (copy-tree (nth i puzzleList))))
+            ;Append the current puzzle to the appropriate index in the splitList
             (setf (nth rowIndex splitList) 
                 (append (nth rowIndex splitList) (list  (nth i puzzleList)) )
             )
             
         )
+        ; Append a nil to the end of the last list
         (setf (cdr (last (car(last splitList)))) (cons 'NIL 'NIL) )
 
+        ; Return the list of puzzles split into puz per line
         (return-from splitPuzzleList splitList)
     )
 )
@@ -172,23 +168,25 @@
 ;------------------------------------------------------------------------------
 (defun printPuzzles ( puzPerLine puzList ) 
     
-    ;(setf puzList '( ((1 2 3) (4 5 6) (7 8 0)) ((2 3 4) (5 6 7) (8 0 1)) ((4 5 6) (7 8 0) (1 2 3)) ))
-
-    ; Get 
+    ; Local variables are declared in the let
     ( let  ( 
                 (numPuz (length puzList)) ; Get the number of puzzles
                 (puzSize (length (car puzList))) ; Get the dimension of a puzzle
                 (lastRow)
             )
-
+        ; Split the puzzle list into the correct number of puzzles per line
         (setf splitPuzzles (splitPuzzleList puzList puzPerLine))
 
         ; For each row of puzzles to be printed
         (dolist (solutionRow splitPuzzles)
-            ; For each row in the puzzles
+            ; Figure out if this is the last row of puzzles to print so we
+            ;   don't print an arrow after the last puzzle
             (setf isLastRow (car (last solutionRow)))
 
+            ; For each line in a puzzle
             (dotimes (i puzSize)
+                ; Print the row with or without arrows, depending if it is
+                ;   the middle row
                 ( if (= i (floor (/ puzSize 2)))
                     (printSolutionRow solutionRow i isLastRow t)
                     (printSolutionRow solutionRow i isLastRow 'NIL)
@@ -221,43 +219,44 @@
     ;(dolist (puzzle puzzleList)
     ;(print puzzleList)
     (let (puzzle)
-    (dotimes (i (length puzzleList))
-        (setf puzzle (nth i puzzleList))
-        ;(format t "Cadr is ~s~%" (cadr puzzle))
-
-
-
-        (cond
+        ; For each puzzle in the solution row
+        (dotimes (i (length puzzleList))
+            ; Set the current puzzle to the next in the list
+            (setf puzzle (nth i puzzleList))
             
+            (cond
+                ; If it's the middle row and there's more puzzles to print,
+                ;   print the row and an arrow between all puzzles
+                (
+                    (and (not (null middleRow)) (not (equal puzzle 'NIL)))
+                    
+                    (printPuzRow (nth rowIndex puzzle))
 
-            ; If it's the middle row and there's more puzzles to print,
-            ;   print an arrow
-            (
-                (and (not (null middleRow)) (not (equal puzzle 'NIL)))
-                
-                (printPuzRow (nth rowIndex puzzle))
+                    (if 
+                        ; If this is the last row of puzzles to print print nothing
+                        ;   after the last puzzle. Otherwise, print an arrow
+                        (and (= i (- (length puzzleList) 2)) (equal lastRow 'NIL) ) 
+                        (format t "")
+                        (format t "   ->   ")
+                    )
+                    
+                    
+                )
+                ; Otherwise, print filler spaces
+                (  (not (equal puzzle 'NIL))
+                    (printPuzRow (nth rowIndex puzzle))
+                    (if 
+                        ; If this is the last row of puzzles to print print nothing
+                        ;   after the last puzzle. Otherwise, print spaces
+                        (and (= i (- (length puzzleList) 2)) (equal lastRow 'NIL) ) 
+                        (format t "")
+                        (format t "        ") 
+                    )
+                )
+                (t (format t ""))
+            )
 
-                (if 
-                    (and (= i (- (length puzzleList) 2)) (equal lastRow 'NIL) ) 
-                    (format t "")
-                    (format t "   ->   ")
-                )
-                
-                
-            )
-            ; Otherwise, print filler spaces
-            (  (not (equal puzzle 'NIL))
-                (printPuzRow (nth rowIndex puzzle))
-                (if 
-                    (and (= i (- (length puzzleList) 2)) (equal lastRow 'NIL) ) 
-                    (format t "")
-                    (format t "        ") 
-                )
-            )
-            (t (format t ""))
         )
-
-    )
     )
     
 
@@ -277,7 +276,9 @@
 ; Return:       none
 ;------------------------------------------------------------------------------
 (defun printPuzRow (rowList)
+    ; For each element in a list of numbers
     (dolist (rowElem rowList)
+        ; If it's nonzero, print the number. Otherwise, print spaces.
         (if (/= '0 rowElem)
             (format t "~2d " rowElem)
             (format t "   ")
