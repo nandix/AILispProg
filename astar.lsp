@@ -69,8 +69,9 @@
 ; Author:	Mack Smith
 ;
 ; Description:  This is our inadmissible heuristic function.  It calculates the minimum distance each
-;				tile is from the goal state by calling the minDist function.  Then it multiplies it by
-;				2 in order to make the heuristic inadmissible.
+;				tile is from the goal state by calling the minDist function.  Then it looks at the number
+;				of tiles out of place and multiplies it by 3. These numbers are added together to provide
+;				a cost to goal.
 ;
 ; Parameters:  L - the state to be processed
 ;
