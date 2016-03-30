@@ -1,3 +1,18 @@
+; -------------------------------------------------------------------------------------------------------
+; File:	astar.lsp
+;
+; Author:	Mack Smith, Dylan Geyer
+;
+; Description:	This file contains all of the heuristic functions and the astar algorithm.  The heuristics
+;				that we chose were:
+;
+;				1)  Number of incorrect tiles  (admissible)
+;				2)  Sum of minimum distances to goal for each tile (admissible)
+;				3)  2 * Sum of minimum distances to goal for each tile (inadmissible)
+;
+;				The astar algorithm was mostly copied from the search_bfs_dfs code, the only significant 
+;				change was sorting the OPEN list before setting the child to the car of the OPEN list.
+; -------------------------------------------------------------------------------------------------------
 
 ; -------------------------------------------------------------------------------------------------------
 ; Function: numWrong 
@@ -143,4 +158,4 @@
 	)
 	
 )
-
+
