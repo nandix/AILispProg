@@ -39,15 +39,19 @@ Modifications:
 ; Depth-first-search implements the OPEN list as a STACK of (state parent) nodes.
 (defun dfs (start) (search_bfs_dfs start 'dfs))
 
-; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
-
-; aStar called like (aStar startPuzzle #'numberCorrectHeur)
-;(defun aStar (start #'heuristicFunc) ; Not sure if that's right
-
-;    (heursticFunc curState goalState)
-
-;)
-
+;------------------------------------------------------------------------------
+; Function: 	search_bfs_dfs
+;
+; Author:	Dr. Weiss
+;
+; Description:	This function will perform either BFS or DFS depending on which
+;		is specified as an argument.
+;
+; Parameters:	start - starting state of the search
+;		type - 'dfs or 'bfs determines how OPEN list is handled
+;
+; Return:	solution path from start state to goal state
+;------------------------------------------------------------------------------
 (defun search_bfs_dfs (start type)
     (do*                                                    ; note use of sequential DO*
         (                                                   ; initialize local loop vars
@@ -97,11 +101,19 @@ Modifications:
     )
 )
 
-;--------------------------------------------------------------------------
-
-; Build-solution takes a state and a list of (state parent) pairs
-; and constructs the list of states that led to the current state
-; by tracing back through the parents to the start node (nil parent).
+;------------------------------------------------------------------------------
+; Function: 	build-solution
+;
+; Author:	Dr. Weiss
+;
+; Description:	This function will back up through the solution path by following
+;		the parent of nodes to the start state.
+;
+; Parameters:	node - goal state node with parents tracing back to start state
+;		node-list - CLOSED list from search routine
+;
+; Return:	path from start to goal
+;------------------------------------------------------------------------------
 (defun build-solution (node node-list)
     (do
         ((path (list (node-state node))))        ; local loop var
@@ -115,7 +127,20 @@ Modifications:
     )
 )
 
-; Member-state looks for a node on the node-list with the same state.
+;------------------------------------------------------------------------------
+; Function: 	member-state
+;
+; Author:	Dr. Weiss
+;
+; Description:	This function returns state if it is found in node-list or nil
+;		if it is not found.
+;
+; Parameters:	state - state to be searched for
+;		node-list - list of nodes to be looked through
+;
+; Return:	node - if node was found in list
+;		nil - if node could not be found
+;------------------------------------------------------------------------------
 (defun member-state (state node-list)
     (dolist (node node-list)
         (when (equal state (node-state node)) (return node))
